@@ -2,7 +2,10 @@ package com.mygdx.game;
 
 import static java.lang.Math.abs;
 import static helper.Constants.PPM;
+
+import helper.BodyHelperService;
 import helper.Textures;
+import helper.Collision;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,12 +18,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.ArrayList;
 
 import helper.TileMapHelper;
+import objects.player.Bullet;
 import objects.player.Enemy;
 import objects.player.Player;
 
@@ -33,7 +38,7 @@ public class GameScreen extends ScreenAdapter {
     private TileMapHelper tileMapHelper;
     private Player player;
     private ArrayList<Enemy> enemies = new ArrayList<>();
-    private int enemyjumpcount = 0;
+    private ArrayList<Bullet> bullets = new ArrayList<>();
     private boolean flag = false;
     BitmapFont foont = new BitmapFont(Gdx.files.internal("assets/fonnt.fnt"), false);
     public GameScreen (OrthographicCamera camera) {
@@ -51,14 +56,20 @@ public class GameScreen extends ScreenAdapter {
         orthogonalTiledMapRenderer.setView(camera);
         player.update();
         for (int i = 0; i < enemies.size(); ++i) {
-            enemies.get(i).update();
+            enemies.get(i).update(player);
             enemies.get(i).move();
-            if (player.getY() > enemies.get(i).getY()) {
-                //enemies.get(i).jump();
+            for (int j = 0; j < bullets.size(); ++j) {
+                if (Collision.Body_collision(enemies.get(i), bullets.get(j)) == true) {
+                    enemies.get(i).health -= 10;
+                    bullets.get(j).y = 9999;
+                }
             }
-            batch.begin();
-            batch.draw(Textures.player_image, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
-            batch.end();
+            if (player.getY() > enemies.get(i).getY()) {
+                enemies.get(i).jump();
+            }
+        }
+        for (int i = 0; i < bullets.size(); ++i) {
+            bullets.get(i).update();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
@@ -83,20 +94,28 @@ public class GameScreen extends ScreenAdapter {
 
         batch.begin();
         batch.draw(Textures.player_image, player.getX() - 16, player.getY() - 16, 32, 32);
-        if (player.cooldown_swing >= 180 && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            flag = true;
-            while (flag && player.cooldown_swing >= 120) {
-                player.cooldown_swing--;
-                batch.draw(Textures.swing_image, player.getX() + 16, player.getY() + 4, 32, 8);
-            }
-            flag = false;
-            player.cooldown_swing = 0;
+        for (int i = 0; i < enemies.size(); ++i) {
+            batch.draw(Textures.player_image, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
+        }
+        for (int i = 0; i < bullets.size(); ++i) {
+            System.out.println(bullets.get(i).getX() + " " + bullets.get(i).getY());
+            batch.draw(Textures.bullet_image, bullets.get(i).getX() - 2.5f, bullets.get(i).getY() - 2.5f, 5f, 5f);
+        }
+        if (player.cooldown_shoot >= 180 && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            Body body = BodyHelperService.createBody(
+                    player.getX() + player.getWidth(),
+                    player.getY() + player.getHeight() / 2,
+                    5f, 5f, false, this.getWorld()
+            );
+            bullets.add(new Bullet(5f, 5f, body));
+            player.cooldown_shoot = 0;
         }
 
         foont.getData().setScale(0.4f);
-        foont.draw(batch, "seconds before slam:" + (20 - player.cooldown_slam / 60),player.getX() + 60, player.getY() + 60);
-        foont.draw(batch, "seconds before boost:" + (10 - player.cooldown_boost / 60),player.getX() + 60, player.getY() + 45);
-        foont.draw(batch, "seconds before swing:" + (3 - player.cooldown_swing / 60),player.getX() + 60, player.getY() + 30);
+        foont.draw(batch, "slam cooldown:" + (20 - player.cooldown_slam / 60),player.getX() - 270, player.getY() + 210);
+        foont.draw(batch, "boost cooldown:" + (10 - player.cooldown_boost / 60),player.getX() - 270, player.getY() + 180);
+        foont.draw(batch, "shoot cooldown:" + (3 - player.cooldown_shoot / 60),player.getX() - 270, player.getY() + 150);
+        foont.draw(batch, "health:" + (player.health),player.getX() - 270, player.getY() + 120);
         if (abs(player.getX() - 100) < 20) {
             batch.draw(Textures.jump_tut, 100, 0, 96, 48);
         }
@@ -116,6 +135,7 @@ public class GameScreen extends ScreenAdapter {
     public World getWorld() {
         return world;
     }
+
     public void setPlayer(Player player) {
         this.player = player;
     }

@@ -61,8 +61,10 @@ public class TileMapHelper {
                             rectangle.getWidth(), rectangle.getHeight(), false, gameScreen.getWorld()
                     );
                     enemies.add(new Enemy(rectangle.getWidth(), rectangle.getHeight(), body));
-
                 }
+                /*if (rectangleName.contains("wall") || rectangleName.contains("floor")) {
+
+                };*/
             }
         }
         gameScreen.setEnemies(enemies);

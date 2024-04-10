@@ -15,9 +15,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class Enemy extends GameEntity {
-    private int health = 100;
+    public int health = 100;
     public int direction = 1;
     boolean flag1 = false;
+    int jumpcount = 0;
 
     public Enemy(float width, float height, Body body) {
         super(width, height, body);
@@ -30,8 +31,8 @@ public class Enemy extends GameEntity {
     }
 
     public void update(Player player) {
-        x = body.getPosition().x * PPM;
-        y = body.getPosition().y * PPM;
+        this.x = body.getPosition().x * PPM;
+        this.y = body.getPosition().y * PPM;
         if (x < player.x) {
             direction = 1;
         } else if (x > player.x) {
@@ -40,14 +41,20 @@ public class Enemy extends GameEntity {
         if (health <= 0) {
             flag1 = true;
         }
+        if (this.y >= 512) {
+
+        }
     }
     public void move() {
         body.setLinearVelocity(1 * direction, body.getLinearVelocity().y);
     }
     public void jump() {
-        float force = body.getMass() * 5;
-        body.setLinearVelocity(body.getLinearVelocity().x, 0);
-        body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+        if (jumpcount <= 2) {
+            float force = body.getMass() * 5;
+            body.setLinearVelocity(body.getLinearVelocity().x, 0);
+            body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
+            jumpcount++;
+        }
     }
     @Override
     public void render(SpriteBatch batch) {

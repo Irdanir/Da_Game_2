@@ -9,5 +9,5 @@ public class Textures {
     public static Texture double_tut = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\double_tut.png"));
     public static Texture boost_tut = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\boost_tut.png"));
     public static Texture slam_tut = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\slam_tut.png"));
-    public static Texture swing_image = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\blast.png"));
+    public static Texture bullet_image = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\bullet_image.png"));
 }

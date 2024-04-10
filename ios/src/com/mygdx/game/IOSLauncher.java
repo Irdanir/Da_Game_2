@@ -12,7 +12,6 @@ public class IOSLauncher extends IOSApplication.Delegate {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
         return new IOSApplication(new PlatformerMain(), config);
     }
-
     public static void main(String[] argv) {
         NSAutoreleasePool pool = new NSAutoreleasePool();
         UIApplication.main(argv, null, IOSLauncher.class);

@@ -3,31 +3,34 @@ package objects.player;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static helper.Constants.PPM;
-import helper.MyInputProcessor;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
 
 public class Player extends GameEntity {
     private int jumpCounter;
 
-    private int health = 100;
+    public int health = 100;
     private int direction = 1;
     public int cooldown_boost = 0;
     public int cooldown_slam = 0;
-    public int cooldown_swing = 0;
+    public int cooldown_shoot = 0;
+
     public Player(float width, float height, Body body) {
         super(width, height, body);
         this.speed = 4f;
         this.jumpCounter = 0;
+        MassData mass = new MassData();
+        mass.mass = 2f;
+        body.setMassData(mass);
     }
+
     float savespeed;
+
     @Override
     public void update() {
         x = body.getPosition().x * PPM;
@@ -48,8 +51,8 @@ public class Player extends GameEntity {
         if (cooldown_slam <= 1200) {
             cooldown_slam++;
         }
-        if (cooldown_swing <= 180) {
-            cooldown_swing++;
+        if (cooldown_shoot <= 180) {
+            cooldown_shoot++;
         }
     }
 
@@ -60,20 +63,20 @@ public class Player extends GameEntity {
 
     private void checkUserInput() {
         velX = 0;
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             velX = 1;
             direction = 1;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             velX = -1;
             direction = -1;
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && jumpCounter < 2) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && jumpCounter < 2) {
             float force = body.getMass() * 5;
             body.setLinearVelocity(body.getLinearVelocity().x, 0);
             body.applyLinearImpulse(new Vector2(0, force), body.getPosition(), true);
             jumpCounter++;
-            System.out.println("jump");
+            System.out.println(this.body.getMass());
         }
         if (body.getLinearVelocity().y == 0) {
             jumpCounter = 0;
@@ -92,10 +95,20 @@ public class Player extends GameEntity {
         }
         body.setLinearVelocity(velX * speed, body.getLinearVelocity().y < 25 ? body.getLinearVelocity().y : 25);
     }
+
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 }
