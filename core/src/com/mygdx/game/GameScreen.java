@@ -87,9 +87,6 @@ public class GameScreen extends ScreenAdapter {
         if (TileMapHelper.enemysize == 0) {
             instance.setScreen(new EndScreen(camera, instance));
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
     }
     private void CameraUpdate() {
         Vector3 position = camera.position;
