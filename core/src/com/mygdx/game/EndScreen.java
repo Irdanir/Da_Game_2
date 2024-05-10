@@ -23,6 +23,7 @@ public class EndScreen extends ScreenAdapter {
         this.camera = orthographicCamera;
         this.batch = new SpriteBatch();
         this.font = new BitmapFont(Gdx.files.internal("assets/fonnt.fnt"), false);
+        font.getData().setScale(1, 1);
         this.instance = instance;
     }
 
@@ -33,6 +34,9 @@ public class EndScreen extends ScreenAdapter {
             public boolean keyDown(int keyCode) {
                 if (keyCode == Input.Keys.SPACE) {
                     instance.setScreen(new TitleScreen(camera, instance));
+                }
+                if (keyCode == Input.Keys.ESCAPE) {
+                    Gdx.app.exit();
                 }
                 return true;
             }
@@ -46,6 +50,8 @@ public class EndScreen extends ScreenAdapter {
         batch.begin();
         font.draw(batch, "You win!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
         font.draw(batch, "Press space to restart.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .25f);
+        font.draw(batch, "Press escape to close.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .50f);
+        font.draw(batch, "Data is not saved when closed.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * 0.1f);
         batch.end();
 
     }
