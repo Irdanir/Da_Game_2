@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.DelayedRemovalArray;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,7 @@ import objects.player.Enemy;
 import objects.player.Player;
 
 public class GameScreen extends ScreenAdapter {
+    public PlatformerMain instance;
     private OrthographicCamera camera;
     private Batch batch;
     private World world;
@@ -37,17 +39,19 @@ public class GameScreen extends ScreenAdapter {
     private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer;
     private TileMapHelper tileMapHelper;
     private Player player;
-    private ArrayList<Enemy> enemies = new ArrayList<>();
-    private ArrayList<Bullet> bullets = new ArrayList<>();
-    private boolean flag = false;
+    private DelayedRemovalArray<Enemy> enemies = new DelayedRemovalArray<>();
+    private DelayedRemovalArray<Bullet> bullets = new DelayedRemovalArray<>();
+    private int bulletsize = 0;
     BitmapFont foont = new BitmapFont(Gdx.files.internal("assets/fonnt.fnt"), false);
-    public GameScreen (OrthographicCamera camera) {
+    public GameScreen (OrthographicCamera camera, PlatformerMain instance) {
         this.camera = camera;
         this.batch = new SpriteBatch();
         this.world = new World(new Vector2(0, -9.81f), false);
         this.box2DDebugRenderer = new Box2DDebugRenderer();
-        this.tileMapHelper = new TileMapHelper(this);
+        this.tileMapHelper = new TileMapHelper();
+        this.tileMapHelper.setGameScreen(this);
         this.orthogonalTiledMapRenderer = tileMapHelper.setupMap();
+        this.instance = instance;
     }
     private void update() {
         world.step(1/60f, 6, 2);
@@ -55,27 +59,38 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
         player.update();
-        for (int i = 0; i < enemies.size(); ++i) {
+        for (int i = 0; i < TileMapHelper.enemysize; ++i) {
+            //System.out.println(TileMapHelper.enemysize);
             enemies.get(i).update(player);
             enemies.get(i).move();
-            for (int j = 0; j < bullets.size(); ++j) {
+            for (int j = 0; j < bulletsize; ++j) {
                 if (Collision.Body_collision(enemies.get(i), bullets.get(j)) == true) {
-                    enemies.get(i).health -= 10;
-                    bullets.get(j).y = 9999;
+                    enemies.get(i).health -= 100;
+                    //enemies.get(i).health -= 10;
+                    world.destroyBody(bullets.get(j).getBody());
+                    bullets.removeIndex(j);
+                    bulletsize -= 1;
                 }
             }
             if (player.getY() > enemies.get(i).getY()) {
                 enemies.get(i).jump();
             }
+            if (enemies.get(i).health <= 0) {
+                world.destroyBody(enemies.get(i).getBody());
+                enemies.removeIndex(i);
+                TileMapHelper.enemysize--;
+            }
         }
-        for (int i = 0; i < bullets.size(); ++i) {
+        for (int i = 0; i < bulletsize; ++i) {
             bullets.get(i).update();
+        }
+        if (TileMapHelper.enemysize == 0) {
+            instance.setScreen(new EndScreen(camera, instance));
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
         }
     }
-
     private void CameraUpdate() {
         Vector3 position = camera.position;
         position.x = Math.round(player.getBody().getPosition().x * PPM * 10) / 10f;
@@ -94,17 +109,17 @@ public class GameScreen extends ScreenAdapter {
 
         batch.begin();
         batch.draw(Textures.player_image, player.getX() - 16, player.getY() - 16, 32, 32);
-        for (int i = 0; i < enemies.size(); ++i) {
+        for (int i = 0; i < TileMapHelper.enemysize; ++i) {
             batch.draw(Textures.player_image, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
         }
-        for (int i = 0; i < bullets.size(); ++i) {
-            System.out.println(bullets.get(i).getX() + " " + bullets.get(i).getY());
+        for (int i = 0; i < bulletsize; ++i) {
             batch.draw(Textures.bullet_image, bullets.get(i).getX() - 2.5f, bullets.get(i).getY() - 2.5f, 5f, 5f);
         }
         if (player.cooldown_shoot >= 180 && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            bulletsize++;
             Body body = BodyHelperService.createBody(
                     player.getX() + player.getWidth(),
-                    player.getY() + player.getHeight() / 2,
+                    player.getY() + player.getHeight() / 2 - 5,
                     5f, 5f, false, this.getWorld()
             );
             bullets.add(new Bullet(5f, 5f, body));
@@ -139,7 +154,7 @@ public class GameScreen extends ScreenAdapter {
     public void setPlayer(Player player) {
         this.player = player;
     }
-    public void setEnemies(ArrayList<Enemy> enemies) {
+    public void setEnemies(DelayedRemovalArray<Enemy> enemies) {
         this.enemies = enemies;
     }
 }

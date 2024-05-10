@@ -10,4 +10,5 @@ public class Textures {
     public static Texture boost_tut = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\boost_tut.png"));
     public static Texture slam_tut = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\slam_tut.png"));
     public static Texture bullet_image = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\bullet_image.png"));
+    public static Texture main_menu_image = new Texture(Gdx.files.internal("C:\\Users\\p3lm3\\AndroidStudioProjects\\The_Game_2\\assets\\main_menu_image.jpg"));
 }

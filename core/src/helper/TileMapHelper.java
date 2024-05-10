@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.utils.DelayedRemovalArray;
 import com.mygdx.game.GameScreen;
 
 import java.util.ArrayList;
@@ -26,10 +27,11 @@ public class TileMapHelper {
 
     private TiledMap tiledMap;
     private GameScreen gameScreen;
-    ArrayList<Enemy> enemies = new ArrayList<>();
+    public static int enemysize = 0;
+    DelayedRemovalArray<Enemy> enemies = new DelayedRemovalArray<>();
 
-    public TileMapHelper(GameScreen gameScreen) {
-        this.gameScreen = gameScreen;
+    public TileMapHelper() {
+
     }
 
     public OrthogonalTiledMapRenderer setupMap() {
@@ -61,12 +63,14 @@ public class TileMapHelper {
                             rectangle.getWidth(), rectangle.getHeight(), false, gameScreen.getWorld()
                     );
                     enemies.add(new Enemy(rectangle.getWidth(), rectangle.getHeight(), body));
+                    enemysize++;
                 }
                 /*if (rectangleName.contains("wall") || rectangleName.contains("floor")) {
 
                 };*/
             }
         }
+        System.out.println(enemysize);
         gameScreen.setEnemies(enemies);
     }
 
@@ -89,5 +93,8 @@ public class TileMapHelper {
         PolygonShape shape = new PolygonShape();
         shape.set(worldVertices);
         return shape;
+    }
+    public void setGameScreen(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
     }
 }

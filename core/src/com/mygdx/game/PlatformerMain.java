@@ -10,9 +10,9 @@ import com.badlogic.gdx.Game;
 
 public class PlatformerMain extends Game {
 
-    public static PlatformerMain instance;
+    public PlatformerMain instance;
     private int screenwidth, screenheight;
-    private OrthographicCamera orthographicCamera;
+    public OrthographicCamera orthographicCamera;
 
     public PlatformerMain() {
         instance = this;
@@ -24,6 +24,7 @@ public class PlatformerMain extends Game {
         this.screenheight = Gdx.graphics.getHeight();
         this.orthographicCamera = new OrthographicCamera();
         this.orthographicCamera.setToOrtho(false, screenwidth, screenheight);
-        setScreen(new GameScreen(orthographicCamera));
+        TitleScreen titlescreen = new TitleScreen(orthographicCamera, instance);
+        setScreen(titlescreen);
     }
 }

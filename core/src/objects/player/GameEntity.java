@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 public abstract class GameEntity {
     public float x, y, velX, velY, speed;
     protected float width, height;
-    protected Body body;
+    public Body body;
 
     public GameEntity(float width, float height, Body body) {
         this.x = body.getPosition().x;

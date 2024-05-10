@@ -21,6 +21,8 @@ public class Bullet extends GameEntity {
     public void update() {
         this.x = body.getPosition().x * PPM;
         this.y = body.getPosition().y * PPM;
+        body.getPosition().x = this.x / PPM;
+        body.getPosition().y = this.y / PPM;
         body.setLinearVelocity(10f, 0.0f);
     }
 
@@ -34,5 +36,8 @@ public class Bullet extends GameEntity {
     }
     public float getX() {
         return x;
+    }
+    public void setY(float y) {
+        this.y = y;
     }
 }
