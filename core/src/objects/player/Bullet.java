@@ -16,14 +16,18 @@ public class Bullet extends GameEntity {
         body.setMassData(mass);
     }
 
-
     @Override
     public void update() {
+
+    }
+
+
+    public void update(Player player) {
         this.x = body.getPosition().x * PPM;
         this.y = body.getPosition().y * PPM;
         body.getPosition().x = this.x / PPM;
         body.getPosition().y = this.y / PPM;
-        body.setLinearVelocity(10f, 0.0f);
+        body.setLinearVelocity(10f * player.direction, 0.0f);
     }
 
     @Override

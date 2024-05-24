@@ -10,9 +10,9 @@ import com.badlogic.gdx.Game;
 
 public class PlatformerMain extends Game {
 
-    public PlatformerMain instance;
-    private int screenwidth, screenheight;
-    public OrthographicCamera orthographicCamera;
+    protected PlatformerMain instance;
+    protected int screenwidth, screenheight;
+    protected OrthographicCamera orthographicCamera;
 
     public PlatformerMain() {
         instance = this;

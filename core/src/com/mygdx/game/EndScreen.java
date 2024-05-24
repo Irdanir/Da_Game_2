@@ -51,7 +51,7 @@ public class EndScreen extends ScreenAdapter {
         font.draw(batch, "You win!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
         font.draw(batch, "Press space to restart.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .25f);
         font.draw(batch, "Press escape to close.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .50f);
-        font.draw(batch, "Data is not saved when closed.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * 0.1f);
+        font.draw(batch, "Data is not saved when you close.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * 0.1f);
         batch.end();
 
     }

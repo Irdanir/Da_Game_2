@@ -15,7 +15,7 @@ public class Player extends GameEntity {
     private int jumpCounter;
 
     public int health = 100;
-    private int direction = 1;
+    public int direction = 1;
     public int cooldown_boost = 0;
     public int cooldown_slam = 0;
     public int cooldown_shoot = 0;
@@ -63,8 +63,7 @@ public class Player extends GameEntity {
 
     private void checkUserInput() {
         velX = 0;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            velX = 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {            velX = 1;
             direction = 1;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {

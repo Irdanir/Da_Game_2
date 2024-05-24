@@ -28,6 +28,7 @@ public class TileMapHelper {
     private TiledMap tiledMap;
     private GameScreen gameScreen;
     public static int enemysize = 0;
+    public Integer levelnumber = 0;
     DelayedRemovalArray<Enemy> enemies = new DelayedRemovalArray<>();
 
     public TileMapHelper() {
@@ -35,7 +36,7 @@ public class TileMapHelper {
     }
 
     public OrthogonalTiledMapRenderer setupMap() {
-        tiledMap = new TmxMapLoader().load("maps/map0.tmx");
+        tiledMap = new TmxMapLoader().load("maps/map" + levelnumber.toString() + ".tmx");
         parseMapObjects(tiledMap.getLayers().get("objects").getObjects());
         return new OrthogonalTiledMapRenderer(tiledMap);
     }

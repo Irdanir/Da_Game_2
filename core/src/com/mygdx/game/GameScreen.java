@@ -10,6 +10,7 @@ import helper.Collision;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -43,6 +44,7 @@ public class GameScreen extends ScreenAdapter {
     private DelayedRemovalArray<Bullet> bullets = new DelayedRemovalArray<>();
     private int bulletsize = 0;
     BitmapFont foont = new BitmapFont(Gdx.files.internal("assets/fonnt.fnt"), false);
+    Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("assets\\game_music.ogg"));
     public GameScreen (OrthographicCamera camera, PlatformerMain instance) {
         this.camera = camera;
         this.batch = new SpriteBatch();
@@ -52,7 +54,11 @@ public class GameScreen extends ScreenAdapter {
         this.tileMapHelper.setGameScreen(this);
         this.orthogonalTiledMapRenderer = tileMapHelper.setupMap();
         this.instance = instance;
+
+        gameMusic.setLooping(true);
+        gameMusic.play();
     }
+    //Добавить музыку, поворот при движении, гибель игрока, все записать в презентацию
     private void update() {
         world.step(1/60f, 6, 2);
         CameraUpdate();
@@ -63,6 +69,10 @@ public class GameScreen extends ScreenAdapter {
             //System.out.println(TileMapHelper.enemysize);
             enemies.get(i).update(player);
             enemies.get(i).move();
+            if (Collision.Body_collision(enemies.get(i), player)) {
+                player.health -= 20;
+                enemies.get(i).x -= 20 * enemies.get(i).direction;
+            }
             for (int j = 0; j < bulletsize; ++j) {
                 if (Collision.Body_collision(enemies.get(i), bullets.get(j)) == true) {
                     enemies.get(i).health -= 100;
@@ -72,9 +82,6 @@ public class GameScreen extends ScreenAdapter {
                     bulletsize -= 1;
                 }
             }
-            if (player.getY() > enemies.get(i).getY()) {
-                enemies.get(i).jump();
-            }
             if (enemies.get(i).health <= 0) {
                 world.destroyBody(enemies.get(i).getBody());
                 enemies.removeIndex(i);
@@ -82,9 +89,10 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         for (int i = 0; i < bulletsize; ++i) {
-            bullets.get(i).update();
+            bullets.get(i).update(player);
         }
         if (TileMapHelper.enemysize == 0) {
+            gameMusic.stop();
             instance.setScreen(new EndScreen(camera, instance));
         }
     }
@@ -105,9 +113,17 @@ public class GameScreen extends ScreenAdapter {
         orthogonalTiledMapRenderer.render();
 
         batch.begin();
-        batch.draw(Textures.player_image, player.getX() - 16, player.getY() - 16, 32, 32);
+        if (player.direction == 1) {
+            batch.draw(Textures.player_right, player.getX() - 16, player.getY() - 16, 32, 32);
+        } else {
+            batch.draw(Textures.player_left, player.getX() - 16, player.getY() - 16, 32, 32);
+        }
         for (int i = 0; i < TileMapHelper.enemysize; ++i) {
-            batch.draw(Textures.player_image, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
+            if (enemies.get(i).direction == 1) {
+                batch.draw(Textures.goblin_right, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
+            } else {
+                batch.draw(Textures.goblin_left, enemies.get(i).getX() - 16, enemies.get(i).getY() - 16, 32, 32);
+            }
         }
         for (int i = 0; i < bulletsize; ++i) {
             batch.draw(Textures.bullet_image, bullets.get(i).getX() - 2.5f, bullets.get(i).getY() - 2.5f, 5f, 5f);
@@ -115,7 +131,7 @@ public class GameScreen extends ScreenAdapter {
         if (player.cooldown_shoot >= 180 && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             bulletsize++;
             Body body = BodyHelperService.createBody(
-                    player.getX() + player.getWidth(),
+                    player.getX() + (player.getWidth()) * player.direction,
                     player.getY() + player.getHeight() / 2 - 5,
                     5f, 5f, false, this.getWorld()
             );
@@ -141,7 +157,7 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(Textures.slam_tut, 600, 0, 128, 48);
         }
         batch.end();
-        box2DDebugRenderer.render(world, camera.combined.scl(PPM));
+        //box2DDebugRenderer.render(world, camera.combined.scl(PPM));
     }
 
     public World getWorld() {
