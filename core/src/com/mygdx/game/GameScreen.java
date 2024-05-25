@@ -170,7 +170,7 @@ public class GameScreen extends ScreenAdapter {
         for (int i = 0; i < bulletsize; ++i) {
             bullets.get(i).update(player);
         }
-        if (TileMapHelper.enemysize == 0 || player.health == 0) {
+        if (player.health == 0) {
             gameMusic.stop();
             instance.setScreen(new WinScreen(camera, instance, player));
         }

@@ -33,10 +33,8 @@ public class TitleScreen extends ScreenAdapter {
     OrthographicCamera camera;
     SpriteBatch batch;
     BitmapFont font;
-    Drawable startdraw = new TextureRegionDrawable(new Texture("startbutton.png"));
-    Drawable exitdraw = new TextureRegionDrawable(new Texture("exitbutton.png"));
-    ImageButton gamestart = new ImageButton(startdraw);
-    ImageButton gameoff = new ImageButton(exitdraw);
+    Drawable startdraw = new TextureRegionDrawable(new Texture("start_button.png"));
+    Drawable exitdraw = new TextureRegionDrawable(new Texture("exit_button.png"));
     Stage stage = new Stage(new ScreenViewport());
     public TitleScreen(OrthographicCamera orthographicCamera, PlatformerMain instance) {
         Gdx.input.setInputProcessor(stage);
@@ -47,43 +45,51 @@ public class TitleScreen extends ScreenAdapter {
         Music menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu_music.ogg"));
         menuMusic.setLooping(true);
         menuMusic.play();
-        //gamestart.setPosition( 0, 0);
-        //gamestart.setPosition(Gdx.graphics.getWidth() * 0.05f, Gdx.graphics.getHeight() * 0.0f);
-        //gameoff.setPosition( Gdx.graphics.getWidth() * .65f, Gdx.graphics.getHeight() * 0.0f);
         int row_height = Gdx.graphics.getWidth() / 12;
         int col_width = Gdx.graphics.getWidth() / 12;
-        ImageButton button3 = new ImageButton(startdraw);
-        button3.setSize(col_width*4,(float)(row_height*2));
-        button3.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("slam_tut.png"))));
-        button3.setPosition(col_width,Gdx.graphics.getHeight()-row_height*6);
-        button3.addListener(new InputListener(){
+        ImageButton gamestart = new ImageButton(startdraw);
+        gamestart.setSize(col_width*4,(float)(row_height*2));
+        gamestart.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("slam_tut.png"))));
+        gamestart.setPosition(col_width,Gdx.graphics.getHeight()-row_height*6);
+        gamestart.addListener(new InputListener(){
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("a");
-                instance.setScreen(new GameScreen(camera, instance));
-                return true;
-            }
-            @Override
-            public boolean keyDown(InputEvent event, int keyCode) {
                 System.out.println("a");
                 menuMusic.stop();
                 instance.setScreen(new GameScreen(camera, instance));
                 return true;
             }
+            /*@Override
+            public boolean keyDown(InputEvent event, int keyCode) {
+                System.out.println("a");
+
+                instance.setScreen(new GameScreen(camera, instance));
+                return true;
+            }*/
         });
-        stage.addActor(button3);
-    }
-    @Override
-    public void show(){
-        /*Gdx.input.setInputProcessor(new InputAdapter() {
+        ImageButton gameexit = new ImageButton(exitdraw);
+        gameexit.setSize(col_width*4,(float)(row_height*2));
+        gameexit.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("exit_button.png"))));
+        gameexit.setPosition(col_width * 3,Gdx.graphics.getHeight()-row_height*6);
+        gameexit.addListener(new InputListener(){
             @Override
-            public boolean keyDown(int keyCode) {
-                if (keyCode == Input.Keys.SPACE) {
-                    instance.setScreen(new GameScreen(camera, instance));
-                }
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.exit();
                 return true;
             }
-        });*/
+            /*@Override
+            public boolean keyDown(InputEvent event, int keyCode) {
+                System.out.println("a");
+
+                instance.setScreen(new GameScreen(camera, instance));
+                return true;
+            }*/
+        });
+        stage.addActor(gamestart);
+        stage.addActor(gameexit);
+    }
+    @Override
+    public void show() {
         Gdx.input.setInputProcessor(stage);
     }
 
