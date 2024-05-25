@@ -19,14 +19,14 @@ public class LoseScreen extends ScreenAdapter {
     OrthographicCamera camera;
     SpriteBatch batch;
     BitmapFont font;
-    Player player;
+    ArrayList<Enemy> enemies;
     public LoseScreen(OrthographicCamera orthographicCamera, PlatformerMain instance, ArrayList<Enemy> enemies) {
         this.camera = orthographicCamera;
         this.batch = new SpriteBatch();
         this.font = new BitmapFont(Gdx.files.internal("fonnt.fnt"), false);
         font.getData().setScale(1, 1);
         this.instance = instance;
-        this.player = player;
+        this.enemies = enemies;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class LoseScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(.25f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        font.draw(batch, "You win!!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
-        font.draw(batch, "Health left: " + player.health, Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .65f);
+        font.draw(batch, "You lose.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
+        font.draw(batch, "Enemies left: " + enemies.size(), Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .65f);
         font.draw(batch, "Press 'restart' to restart the game.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .25f);
         font.draw(batch, "Press 'exit' to close the app.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .50f);
         font.draw(batch, "Data is not saved when you close.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * 0.1f);
