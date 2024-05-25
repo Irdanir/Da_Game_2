@@ -42,9 +42,9 @@ public class TitleScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage);
         this.camera = orthographicCamera;
         this.batch = new SpriteBatch();
-        this.font = new BitmapFont(Gdx.files.internal("assets/fonnt.fnt"), false);
+        this.font = new BitmapFont(Gdx.files.internal("fonnt.fnt"), false);
         this.instance = instance;
-        Music menuMusic = Gdx.audio.newMusic(Gdx.files.internal("assets\\menu_music.ogg"));
+        Music menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu_music.ogg"));
         menuMusic.setLooping(true);
         menuMusic.play();
         //gamestart.setPosition( 0, 0);
@@ -60,8 +60,6 @@ public class TitleScreen extends ScreenAdapter {
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 System.out.println("a");
-                menuMusic.stop();
-                hide();
                 instance.setScreen(new GameScreen(camera, instance));
                 return true;
             }
@@ -69,7 +67,6 @@ public class TitleScreen extends ScreenAdapter {
             public boolean keyDown(InputEvent event, int keyCode) {
                 System.out.println("a");
                 menuMusic.stop();
-                hide();
                 instance.setScreen(new GameScreen(camera, instance));
                 return true;
             }

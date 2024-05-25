@@ -3,8 +3,6 @@ package objects.player;
 import static java.lang.Math.max;
 import static helper.Constants.PPM;
 
-import helper.MyInputProcessor;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
