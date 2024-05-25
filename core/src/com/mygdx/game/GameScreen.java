@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -35,6 +36,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import helper.TileMapHelper;
 import objects.player.Bullet;
 import objects.player.Enemy;
+import objects.player.Gates;
 import objects.player.Player;
 
 public class GameScreen extends ScreenAdapter {
@@ -52,6 +54,13 @@ public class GameScreen extends ScreenAdapter {
     BitmapFont foont = new BitmapFont(Gdx.files.internal("fonnt.fnt"), false);
     Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("game_music.ogg"));
     Stage stage;
+    ImageButton jumpbutton;
+    ImageButton leftbutton;
+    ImageButton rightbutton;
+    ImageButton shootbutton;
+    int row_height = Gdx.graphics.getWidth() / 12;
+    int col_width = Gdx.graphics.getWidth() / 12;
+
     public GameScreen (OrthographicCamera camera, PlatformerMain instance) {
         this.camera = camera;
         camera.zoom -= 0.65f;
@@ -69,10 +78,8 @@ public class GameScreen extends ScreenAdapter {
         gameMusic.setLooping(true);
         gameMusic.play();
         Gdx.input.setInputProcessor(stage);
-        int row_height = Gdx.graphics.getWidth() / 12;
-        int col_width = Gdx.graphics.getWidth() / 12;
         Drawable rightdraw = new TextureRegionDrawable(new Texture("right_arrow_red.png"));
-        ImageButton rightbutton = new ImageButton(rightdraw);
+        rightbutton = new ImageButton(rightdraw);
         rightbutton.setSize(col_width*1,(float)(row_height*2));
         rightbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("right_arrow_red.png"))));
         rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6);
@@ -90,7 +97,7 @@ public class GameScreen extends ScreenAdapter {
 
         });
         Drawable leftdraw = new TextureRegionDrawable(new Texture("left_arrow_red.png"));
-        ImageButton leftbutton = new ImageButton(leftdraw);
+        leftbutton = new ImageButton(leftdraw);
         leftbutton.setSize(col_width*1,(float)(row_height*2));
         leftbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("left_arrow_red.png"))));
         leftbutton.setPosition(0,Gdx.graphics.getHeight()-row_height*6);
@@ -108,7 +115,7 @@ public class GameScreen extends ScreenAdapter {
 
         });
         Drawable shootdraw = new TextureRegionDrawable(new Texture("player_left.png"));
-        ImageButton shootbutton = new ImageButton(shootdraw);
+        shootbutton = new ImageButton(shootdraw);
         shootbutton.setSize(col_width*1,(float)(row_height*2));
         shootbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("player_left.png"))));
         shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6);
@@ -128,14 +135,33 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                return;
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {}
+
+        });
+        Drawable jumpdraw = new TextureRegionDrawable(new Texture("up_arrow_red.png"));
+        jumpbutton = new ImageButton(jumpdraw);
+        jumpbutton.setSize(col_width*1,(float)(row_height*2));
+        jumpbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("up_arrow_red.png"))));
+        jumpbutton.setPosition(col_width * 3f,Gdx.graphics.getHeight()-row_height*6);
+        jumpbutton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (player.jumpCounter < 2) {
+                    float force = player.body.getMass() * 5;
+                    player.body.setLinearVelocity(player.body.getLinearVelocity().x, 0);
+                    player.body.applyLinearImpulse(new Vector2(0, force), player.body.getPosition(), true);
+                    player.jumpCounter++;
+                }
+                return true;
             }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {}
 
         });
         stage.addActor(rightbutton);
         stage.addActor(leftbutton);
         stage.addActor(shootbutton);
+        stage.addActor(jumpbutton);
     }
     //Добавить музыку, поворот при движении, гибель игрока, все записать в презентацию
     private void update() {
@@ -144,16 +170,24 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
         player.update();
+        rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
+        leftbutton.setPosition(col_width * 0f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
+        shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
+        jumpbutton.setPosition(col_width * 3f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
+        Rectangle player_rect = new Rectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         for (int i = 0; i < TileMapHelper.enemysize; ++i) {
+            Enemy enemy = enemies.get(i);
+            Rectangle enemy_rect = new Rectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
             //System.out.println(TileMapHelper.enemysize);
             enemies.get(i).update(player);
             enemies.get(i).move();
-            if (Collision.Body_collision(enemies.get(i), player)) {
-                player.health -= 20;
-                enemies.get(i).x -= 20 * enemies.get(i).direction;
+            if (enemy_rect.overlaps(player_rect)) {
+                player.health = 0;
             }
             for (int j = 0; j < bulletsize; ++j) {
-                if (Collision.Body_collision(enemies.get(i), bullets.get(j)) == true) {
+                Bullet bullet = bullets.get(j);
+                Rectangle bullet_rect = new Rectangle(bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
+                if (enemy_rect.overlaps(bullet_rect) || bullets.get(j).delete == true) {
                     enemies.get(i).health -= 100;
                     //enemies.get(i).health -= 10;
                     world.destroyBody(bullets.get(j).getBody());
@@ -170,9 +204,15 @@ public class GameScreen extends ScreenAdapter {
         for (int i = 0; i < bulletsize; ++i) {
             bullets.get(i).update(player);
         }
+        if (TileMapHelper.enemysize == 0) {
+            gameMusic.stop();
+            hide();
+            instance.setScreen(new WinScreen(camera, instance, player));
+        }
         if (player.health == 0) {
             gameMusic.stop();
-            instance.setScreen(new WinScreen(camera, instance, player));
+            hide();
+            instance.setScreen(new LoseScreen(camera, instance, TileMapHelper.enemysize));
         }
     }
     @Override
@@ -192,9 +232,8 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(); //Perform ui logic
-        stage.draw(); //Draw the ui
         orthogonalTiledMapRenderer.render();
-
+        stage.draw(); //Draw the ui
         batch.begin();
         if (player.direction == 1) {
             batch.draw(Textures.player_right, player.getX() - 16, player.getY() - 16, 32, 32);
@@ -211,10 +250,7 @@ public class GameScreen extends ScreenAdapter {
         for (int i = 0; i < bulletsize; ++i) {
             batch.draw(Textures.bullet_image, bullets.get(i).getX() - 2.5f, bullets.get(i).getY() - 2.5f, 5f, 5f);
         }
-
         foont.getData().setScale(0.4f);
-        foont.draw(batch, "slam cooldown:" + (20 - player.cooldown_slam / 60),player.getX() - 270, player.getY() + 10);
-        foont.draw(batch, "boost cooldown:" + (10 - player.cooldown_boost / 60),player.getX() - 270, player.getY() + 120);
         foont.draw(batch, "shoot cooldown:" + (3 - player.cooldown_shoot / 60),player.getX() - 270, player.getY() + 90);
         foont.draw(batch, "health:" + (player.health),player.getX() - 270, player.getY() + 60);
         if (abs(player.getX() - 100) < 20) {

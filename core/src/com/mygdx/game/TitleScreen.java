@@ -28,12 +28,15 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import javax.swing.text.View;
 
+import objects.player.Player;
+
 public class TitleScreen extends ScreenAdapter {
     public PlatformerMain instance;
     OrthographicCamera camera;
     SpriteBatch batch;
     BitmapFont font;
     Drawable startdraw = new TextureRegionDrawable(new Texture("start_button.png"));
+    Texture background = new Texture("exit_image.png");
     Drawable exitdraw = new TextureRegionDrawable(new Texture("exit_button.png"));
     Stage stage = new Stage(new ScreenViewport());
     public TitleScreen(OrthographicCamera orthographicCamera, PlatformerMain instance) {
@@ -49,7 +52,7 @@ public class TitleScreen extends ScreenAdapter {
         int col_width = Gdx.graphics.getWidth() / 12;
         ImageButton gamestart = new ImageButton(startdraw);
         gamestart.setSize(col_width*4,(float)(row_height*2));
-        gamestart.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("slam_tut.png"))));
+        gamestart.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("start_button.png"))));
         gamestart.setPosition(col_width,Gdx.graphics.getHeight()-row_height*6);
         gamestart.addListener(new InputListener(){
             @Override
@@ -70,7 +73,7 @@ public class TitleScreen extends ScreenAdapter {
         ImageButton gameexit = new ImageButton(exitdraw);
         gameexit.setSize(col_width*4,(float)(row_height*2));
         gameexit.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("exit_button.png"))));
-        gameexit.setPosition(col_width * 3,Gdx.graphics.getHeight()-row_height*6);
+        gameexit.setPosition(col_width * 7,Gdx.graphics.getHeight()-row_height*6);
         gameexit.addListener(new InputListener(){
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -97,6 +100,9 @@ public class TitleScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, .25f, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        batch.draw(background, 0 , 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
         stage.act(Gdx.graphics.getDeltaTime()); //Perform ui logic
         stage.draw(); //Draw the ui
     }

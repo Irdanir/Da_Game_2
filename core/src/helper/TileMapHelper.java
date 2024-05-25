@@ -21,10 +21,10 @@ import com.mygdx.game.GameScreen;
 import java.util.ArrayList;
 
 import objects.player.Enemy;
+import objects.player.Gates;
 import objects.player.Player;
 
 public class TileMapHelper {
-
     private TiledMap tiledMap;
     private GameScreen gameScreen;
     public static int enemysize = 0;
@@ -56,6 +56,13 @@ public class TileMapHelper {
                             rectangle.getWidth(), rectangle.getHeight(), false, gameScreen.getWorld()
                     );
                     gameScreen.setPlayer(new Player(rectangle.getWidth(), rectangle.getHeight(), body));
+                }
+                if (rectangleName.equals("bunga")) {
+                    Body body = BodyHelperService.createBody(
+                            rectangle.getX() + rectangle.getWidth() / 2,
+                            rectangle.getY() + rectangle.getHeight() / 2,
+                            rectangle.getWidth(), rectangle.getHeight(), false, gameScreen.getWorld()
+                    );
                 }
                 if (rectangleName.equals("enemy")) {
                     Body body = BodyHelperService.createBody(
