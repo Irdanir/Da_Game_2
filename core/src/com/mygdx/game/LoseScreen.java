@@ -35,7 +35,6 @@ public class LoseScreen extends ScreenAdapter {
     OrthographicCamera camera;
     SpriteBatch batch;
     BitmapFont font;
-    Drawable startdraw = new TextureRegionDrawable(new Texture("start_button.png"));
     Texture background = new Texture("lose_image.jpg");
     Drawable exitdraw = new TextureRegionDrawable(new Texture("exit_button.png"));
     Stage stage = new Stage(new ScreenViewport());

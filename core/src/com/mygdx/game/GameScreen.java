@@ -138,7 +138,7 @@ public class GameScreen extends ScreenAdapter {
         });
         Drawable jumpdraw = new TextureRegionDrawable(new Texture("up_arrow_red.png"));
         jumpbutton = new ImageButton(jumpdraw);
-        jumpbutton.setSize(col_width*1,(float)(row_height*2));
+        jumpbutton.setSize(col_width*1, (row_height*1.75f));
         jumpbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("up_arrow_red.png"))));
         jumpbutton.setPosition(col_width * 3f,Gdx.graphics.getHeight()-row_height*6);
         jumpbutton.addListener(new InputListener(){
@@ -167,10 +167,10 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
         player.update();
-        rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6);
         leftbutton.setPosition(col_width * 0f,Gdx.graphics.getHeight()-row_height*6);
-        shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6);
-        jumpbutton.setPosition(col_width * 9f,Gdx.graphics.getHeight()-row_height*6);
+        rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6);
+        shootbutton.setPosition(col_width * 10f,Gdx.graphics.getHeight()-row_height*6f);
+        jumpbutton.setPosition(col_width * 11f,Gdx.graphics.getHeight()-row_height*6f);
         Rectangle player_rect = new Rectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         for (int i = 0; i < TileMapHelper.enemysize; ++i) {
             Enemy enemy = enemies.get(i);

@@ -36,7 +36,7 @@ public class TitleScreen extends ScreenAdapter {
     SpriteBatch batch;
     BitmapFont font;
     Drawable startdraw = new TextureRegionDrawable(new Texture("start_button.png"));
-    Texture background = new Texture("exit_image.png");
+    Texture background = new Texture("menu_image.jpg");
     Drawable exitdraw = new TextureRegionDrawable(new Texture("exit_button.png"));
     Stage stage = new Stage(new ScreenViewport());
     public TitleScreen(OrthographicCamera orthographicCamera, PlatformerMain instance) {
