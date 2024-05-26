@@ -5,7 +5,6 @@ import static helper.Constants.PPM;
 
 import helper.BodyHelperService;
 import helper.Textures;
-import helper.Collision;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -36,7 +35,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import helper.TileMapHelper;
 import objects.player.Bullet;
 import objects.player.Enemy;
-import objects.player.Gates;
 import objects.player.Player;
 
 public class GameScreen extends ScreenAdapter {
@@ -114,10 +112,10 @@ public class GameScreen extends ScreenAdapter {
             }
 
         });
-        Drawable shootdraw = new TextureRegionDrawable(new Texture("player_left.png"));
+        Drawable shootdraw = new TextureRegionDrawable(new Texture("pointer.jpg"));
         shootbutton = new ImageButton(shootdraw);
         shootbutton.setSize(col_width*1,(float)(row_height*2));
-        shootbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("player_left.png"))));
+        shootbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("pointer.jpg"))));
         shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6);
         shootbutton.addListener(new InputListener(){
             @Override
@@ -163,24 +161,22 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(shootbutton);
         stage.addActor(jumpbutton);
     }
-    //Добавить музыку, поворот при движении, гибель игрока, все записать в презентацию
     private void update() {
         world.step(1/60f, 6, 2);
         CameraUpdate();
         batch.setProjectionMatrix(camera.combined);
         orthogonalTiledMapRenderer.setView(camera);
         player.update();
-        rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
-        leftbutton.setPosition(col_width * 0f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
-        shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
-        jumpbutton.setPosition(col_width * 3f,Gdx.graphics.getHeight()-row_height*6 + player.getY());
+        rightbutton.setPosition(col_width * 1f,Gdx.graphics.getHeight()-row_height*6);
+        leftbutton.setPosition(col_width * 0f,Gdx.graphics.getHeight()-row_height*6);
+        shootbutton.setPosition(col_width * 2f,Gdx.graphics.getHeight()-row_height*6);
+        jumpbutton.setPosition(col_width * 9f,Gdx.graphics.getHeight()-row_height*6);
         Rectangle player_rect = new Rectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight());
         for (int i = 0; i < TileMapHelper.enemysize; ++i) {
             Enemy enemy = enemies.get(i);
-            Rectangle enemy_rect = new Rectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-            //System.out.println(TileMapHelper.enemysize);
             enemies.get(i).update(player);
             enemies.get(i).move();
+            Rectangle enemy_rect = new Rectangle(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
             if (enemy_rect.overlaps(player_rect)) {
                 player.health = 0;
             }
@@ -189,7 +185,6 @@ public class GameScreen extends ScreenAdapter {
                 Rectangle bullet_rect = new Rectangle(bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
                 if (enemy_rect.overlaps(bullet_rect) || bullets.get(j).delete == true) {
                     enemies.get(i).health -= 100;
-                    //enemies.get(i).health -= 10;
                     world.destroyBody(bullets.get(j).getBody());
                     bullets.removeIndex(j);
                     bulletsize -= 1;
@@ -217,6 +212,7 @@ public class GameScreen extends ScreenAdapter {
     }
     @Override
     public void hide () {
+        TileMapHelper.enemysize = 0;
     }
     private void CameraUpdate() {
         Vector3 position = camera.position;
@@ -231,9 +227,8 @@ public class GameScreen extends ScreenAdapter {
         this.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(); //Perform ui logic
         orthogonalTiledMapRenderer.render();
-        stage.draw(); //Draw the ui
+        stage.act(); //Perform ui logic
         batch.begin();
         if (player.direction == 1) {
             batch.draw(Textures.player_right, player.getX() - 16, player.getY() - 16, 32, 32);
@@ -260,6 +255,7 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(Textures.double_tut, 250, 0, 128, 48);
         }
         batch.end();
+        stage.draw(); //Draw the ui
         //box2DDebugRenderer.render(world, camera.combined.scl(PPM));
     }
 
