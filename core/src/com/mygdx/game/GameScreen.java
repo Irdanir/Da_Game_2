@@ -138,7 +138,7 @@ public class GameScreen extends ScreenAdapter {
         });
         Drawable jumpdraw = new TextureRegionDrawable(new Texture("up_arrow_red.png"));
         jumpbutton = new ImageButton(jumpdraw);
-        jumpbutton.setSize(col_width*1, (row_height*1.75f));
+        jumpbutton.setSize(col_width*1, (row_height*2f));
         jumpbutton.getStyle().imageDown = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("up_arrow_red.png"))));
         jumpbutton.setPosition(col_width * 3f,Gdx.graphics.getHeight()-row_height*6);
         jumpbutton.addListener(new InputListener(){
